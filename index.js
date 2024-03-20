@@ -15,6 +15,7 @@ app.get('/',(req,res)=>{
 app.listen(process.env.PORT, async()=>{
     try{
         await connection
+        console.log("connected to db")
         console.log(`server is connected on ${process.env.PORT}`)
     }catch(err){
         console.log(err)
