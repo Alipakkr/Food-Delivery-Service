@@ -7,8 +7,6 @@ require("dotenv").config()
 
 const userRoute = express.Router()
 
-const saltRound = process.env.SALT_ROUND
-
 userRoute.post("/register", async(req, res)=>{
     const {name, email, password, address} = req.body
 
@@ -18,7 +16,7 @@ userRoute.post("/register", async(req, res)=>{
             return res.status(400).json({msg: "user already exists"})
         }
 
-        bcrypt.hash(password, saltRound, async(error, hash)=>{
+        bcrypt.hash(password, 5, async(error, hash)=>{
             const user = new userModel({
                 name, 
                 email, 
@@ -55,6 +53,9 @@ userRoute.post("/login", async(req, res)=>{
                     const token = jwt.sign({userID: user._id}, secrete_key, {expiresIn : "1d"})
                     res.status(201).json({msg:"Login successfull!!!", login_User : user.name, token})
                 }
+                else{
+                    res.status(201).json({msg:"Password is wrong"})
+                }
             })
         }
         else{
@@ -79,11 +80,15 @@ userRoute.put("/:id/reset", async(req, res)=>{
         if(!isValid){
             return res.status(200).json({msg: "Invalid current password"})
         }
-        const hash = await bcrypt.hash(newPassword, saltRound)
+        const hash = await bcrypt.hash(newPassword, 5)
 
-        
-    }catch(err){
-
+        user.password = hash;
+        await user.save();
+        res.status(204).json({ msg: "Password reset successfully",user :user});
+    }
+    catch(err){
+        res.status(500).json({ msg: "Error resetting password", error: err });
+        console.log(err)
     }
 })
 module.exports ={
