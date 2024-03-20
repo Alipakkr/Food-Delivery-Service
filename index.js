@@ -2,6 +2,7 @@ const express = require("express")
 const { connection } = require("./db")
 const { userRoute } = require("./controller/routes/user.routes")
 const { restaurantRoute } = require("./controller/routes/restaurant.routes")
+const { orderRoute } = require("./controller/routes/order.routes")
 require("dotenv").config()
 
 const app = express()
@@ -13,6 +14,8 @@ app.get('/',(req,res)=>{
 })
 app.use("/users", userRoute)
 app.use("/restaurants", restaurantRoute)
+app.use("/orders", orderRoute)
+
 app.listen(process.env.PORT, async()=>{
     try{
         await connection
