@@ -1,6 +1,6 @@
 const express = require("express")
 const { connection } = require("./db")
-
+const { userRoute } = require("./controller/routes/user.routes")
 
 require("dotenv").config()
 
@@ -11,6 +11,7 @@ app.use(express.json())
 app.get('/',(req,res)=>{
     res.json("this is home")
 })
+app.use("/users", userRoute)
 
 app.listen(process.env.PORT, async()=>{
     try{
